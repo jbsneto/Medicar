@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from core.utils import get_data_hoje
 
 
-
 class Especialidade(models.Model):
     class Meta:
         verbose_name = _('Especialidade Medica')
@@ -38,7 +37,6 @@ class Medico(models.Model):
         return self.nome
 
 
-
 class Agenda(models.Model):
     class Meta:
         verbose_name = _('Agenda')
@@ -48,7 +46,7 @@ class Agenda(models.Model):
     dia = models.DateField(_('Data da agenda'), null=True, blank=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
 
-    #tirar isso daqui
+    # tirar isso daqui
     def clean(self):
         if self.dia < get_data_hoje(0).date():
             raise ValidationError(
@@ -69,31 +67,34 @@ class Horario(models.Model):
         verbose_name_plural = _('Horas')
         ordering = ('hora',)
 
-    hora = models.TimeField(verbose_name=_('Horários disponíveis'))
+    hora = models.TimeField(verbose_name=_('Horários'))
     agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE, verbose_name=_('Agenda'))
     vago = models.BooleanField(default=True)
 
-
     def __str__(self):
-        return str(self.hora)
+        return '%s - %s - %s' % (self.agenda.dia, str(self.hora), self.agenda.medico.nome)
 
 
 class Consulta(models.Model):
     class Meta:
         verbose_name = _('Consulta')
         verbose_name_plural = _('Consultas')
-        ordering = ('dia', 'horario')
+        ordering = ('horario__agenda__dia', 'horario__hora',)
 
-    dia = models.DateField(_('Data'), null=True, blank=True)
-    horario = models.CharField('Hora', max_length=255, blank=True, null=True)
-    data_agendamento = models.DateField(_('Data do agendamento'), auto_now_add=True)
-    medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
+    horario = models.ForeignKey(Horario, on_delete=models.CASCADE, verbose_name=_('Horario'))
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Usuário'))
+    data_agendamento = models.DateField(_('Data do agendamento'), auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        raise ValueError("Updating the value of creator isn't allowed")
+        self.horario.vago = False
+        self.horario.save()
         super().save(*args, **kwargs)
 
+    def get_agenda(self):
+        return self.horario.agenda
+
+    def get_medico(self):
+        return self.horario.agenda.medico
 
     def __str__(self):
-        return str(self.hora)
+        return '%s - %s' % (self.get_agenda().medico.nome, str(self.get_agenda().dia))

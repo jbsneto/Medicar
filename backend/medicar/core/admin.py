@@ -19,20 +19,22 @@ class HorarioInline(admin.TabularInline):
     extra = 0
     min_num = 1
     formset = HorarioFormSet
+    readonly_fields = ('vago',)
 
 @admin.register(Agenda)
 class AgendaAdmin(admin.ModelAdmin):
-    list_filter = ('medico__nome', 'dia')
+    list_filter = ('medico', 'dia')
     list_display = ('dia', 'medico')
     inlines = [HorarioInline, ]
 
 
 @admin.register(Medico)
 class MedicoAdmin(admin.ModelAdmin):
-    list_filter = ('especialidade__nome', )
+    list_filter = ('especialidade', )
     search_fields = ('nome',)
     list_display = ('crm', 'nome', 'email', 'telefone')
 
 @admin.register(Consulta)
 class ConsultaAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ('user', 'horario__agenda__medico', 'horario__agenda__dia', 'horario__hora')
+    list_display = ('user', 'get_agenda', 'horario')

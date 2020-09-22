@@ -25,7 +25,6 @@ class HorarioSerializer(serializers.ModelSerializer):
 
 class AgendaSerializer(serializers.ModelSerializer):
     medico = MedicoSerializer(many=False, read_only=True)
-    #horario_set = HorarioSerializer(many=True, read_only=True)
     horario = serializers.SerializerMethodField()
 
     class Meta:
@@ -41,10 +40,12 @@ class AgendaSerializer(serializers.ModelSerializer):
 
 
 class ConsultaSerializer(serializers.ModelSerializer):
-    medico = MedicoSerializer(many=False, read_only=True)
+    hora = serializers.CharField(source='horario.hora')
+    medico = MedicoSerializer(many=False, read_only=True, source='horario.agenda.medico')
 
     class Meta:
         model = Consulta
-        fields = ('id', 'dia', 'horario', 'data_agendamento', 'medico')
+        fields = ('id', 'hora', 'data_agendamento', 'medico')
+        read_only_fields = ('id', 'hora', 'data_agendamento', 'medico')
 
 

@@ -4,8 +4,9 @@ from rest_framework import viewsets, mixins, status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
-from core.api.serializers import *
-from core.models import *
+from core.api.serializers import EspecialidadeSerializer, MedicoSerializer, \
+    AgendaSerializer, HorarioSerializer, ConsultaSerializer
+from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.utils import get_data_hoje
 
 
@@ -53,11 +54,21 @@ class AgendaViewSet(mixins.ListModelMixin,
     filter_class = AgendaFilter
 
 
+class ConsultaFilter(filters.FilterSet):
+    medico = filters.AllValuesMultipleFilter(field_name='medico__nome')
+    especialidade = filters.AllValuesMultipleFilter(field_name='medico__especialidade__id')
+    data_ini = filters.DateTimeFilter(field_name='dia', lookup_expr='gte')
+    data_fim = filters.DateTimeFilter(field_name='dia', lookup_expr='lte')
+
+    class Meta:
+        model = Agenda
+        fields = ['medico', 'especialidade', 'data_ini', 'data_fim']
+
+
 class ConsultaViewSet(mixins.ListModelMixin,
                       mixins.DestroyModelMixin,
                       mixins.CreateModelMixin,
                       viewsets.GenericViewSet):
-    queryset = Consulta.objects.all()
+    queryset = Consulta.objects.filter(
+        horario__agenda__dia__gt=get_data_hoje(1).date())
     serializer_class = ConsultaSerializer
-    filter_backends = [filters.DjangoFilterBackend]
-    search_fields = ['nome']
