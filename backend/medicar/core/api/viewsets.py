@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from core.api.serializers import *
 from core.models import *
+from core.utils import get_data_hoje
 
 
 class EspecialidadeViewSet(mixins.ListModelMixin,
@@ -34,24 +35,22 @@ class MedicoViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class AgendaFilter(filters.FilterSet):
-    medico = filters.AllValuesMultipleFilter()
-    especialidade = filters.AllValuesMultipleFilter()
-    data_ini = filters.DateFromToRangeFilter()
-    data_fim = filters.DateFromToRangeFilter()
+    medico = filters.AllValuesMultipleFilter(field_name='medico__nome')
+    especialidade = filters.AllValuesMultipleFilter(field_name='medico__especialidade__id')
+    data_ini = filters.DateTimeFilter(field_name='dia', lookup_expr='gte')
+    data_fim = filters.DateTimeFilter(field_name='dia', lookup_expr='lte')
 
     class Meta:
-        model = Medico
-        always_filter = False
+        model = Agenda
         fields = ['medico', 'especialidade', 'data_ini', 'data_fim']
 
 
 class AgendaViewSet(mixins.ListModelMixin,
                     viewsets.GenericViewSet):
-    queryset = Agenda.objects.all()
+    queryset = Agenda.objects.filter(dia__gt=get_data_hoje(1).date())
     serializer_class = AgendaSerializer
-
-
-
+    filter_backends = [filters.DjangoFilterBackend]
+    filter_class = AgendaFilter
 
 
 class ConsultaViewSet(mixins.ListModelMixin,

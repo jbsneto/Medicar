@@ -1,9 +1,10 @@
-import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+
+from core.utils import get_data_hoje
 
 
 
@@ -46,11 +47,10 @@ class Agenda(models.Model):
 
     dia = models.DateField(_('Data da agenda'), null=True, blank=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
-    #horario = models.ManyToManyField(Horario)
 
+    #tirar isso daqui
     def clean(self):
-        dt_now = datetime.datetime.now()
-        if self.dia < dt_now.date():
+        if self.dia < get_data_hoje(0).date():
             raise ValidationError(
                 _('Insira uma data possível para agendamento.'))
         agenda_qs = Agenda.objects.filter(medico=self.medico, dia=self.dia)
@@ -71,6 +71,8 @@ class Horario(models.Model):
 
     hora = models.TimeField(verbose_name=_('Horários disponíveis'))
     agenda = models.ForeignKey(Agenda, on_delete=models.CASCADE, verbose_name=_('Agenda'))
+    vago = models.BooleanField(default=True)
+
 
     def __str__(self):
         return str(self.hora)
@@ -86,7 +88,12 @@ class Consulta(models.Model):
     horario = models.CharField('Hora', max_length=255, blank=True, null=True)
     data_agendamento = models.DateField(_('Data do agendamento'), auto_now_add=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
-    #user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('Usuário'))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Usuário'))
+
+    def save(self, *args, **kwargs):
+        raise ValueError("Updating the value of creator isn't allowed")
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return str(self.hora)

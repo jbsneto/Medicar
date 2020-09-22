@@ -2,7 +2,7 @@ from django.contrib import admin
 import datetime
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
-from core.models import Especialidade, Horario, Agenda, Medico
+from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.forms import HorarioFormSet
 
 
@@ -32,3 +32,7 @@ class MedicoAdmin(admin.ModelAdmin):
     list_filter = ('especialidade__nome', )
     search_fields = ('nome',)
     list_display = ('crm', 'nome', 'email', 'telefone')
+
+@admin.register(Consulta)
+class ConsultaAdmin(admin.ModelAdmin):
+    pass
