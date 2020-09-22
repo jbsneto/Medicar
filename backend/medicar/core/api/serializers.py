@@ -18,10 +18,18 @@ class MedicoSerializer(serializers.ModelSerializer):
         fields = ('id', 'nome', 'crm', 'email', 'telefone', 'especialidade')
 
 
+class HorarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Horario
+        fields = ('hora',)
+
 class AgendaSerializer(serializers.ModelSerializer):
+    medico = MedicoSerializer(many=False, read_only=True)
+    horario_set = HorarioSerializer(many=True, read_only=True)
+
     class Meta:
         model = Agenda
-        fields = ('nome',)
+        fields = ('id', 'medico', 'dia', 'horario_set')
 
 
 class ConsultaSerializer(serializers.ModelSerializer):
@@ -29,4 +37,6 @@ class ConsultaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Consulta
-        fields = ('id', 'dia', 'horario', 'data_agendaemnto', 'medico')
+        fields = ('id', 'dia', 'horario', 'data_agendamento', 'medico')
+
+

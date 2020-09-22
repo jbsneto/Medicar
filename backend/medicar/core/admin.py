@@ -17,6 +17,7 @@ class EspecialidadeAdmin(admin.ModelAdmin):
 class HorarioInline(admin.TabularInline):
     model = Horario
     extra = 0
+    min_num = 1
     formset = HorarioFormSet
 
 @admin.register(Agenda)

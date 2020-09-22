@@ -1,14 +1,10 @@
 import datetime
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-from django.contrib.messages import constants as messages
 
-"""
-Dependendo da situação, gosto de colocar todos os validadores no modelo, pq extende
-para qualquer local que eu possa trabalhar (Serializers, Form, Admin, etc)
-"""
 
 
 class Especialidade(models.Model):
@@ -50,6 +46,7 @@ class Agenda(models.Model):
 
     dia = models.DateField(_('Data da agenda'), null=True, blank=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
+    #horario = models.ManyToManyField(Horario)
 
     def clean(self):
         dt_now = datetime.datetime.now()
@@ -89,3 +86,7 @@ class Consulta(models.Model):
     horario = models.CharField('Hora', max_length=255, blank=True, null=True)
     data_agendamento = models.DateField(_('Data do agendamento'), auto_now_add=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
+    #user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('Usuário'))
+
+    def __str__(self):
+        return str(self.hora)

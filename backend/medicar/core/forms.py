@@ -1,13 +1,14 @@
 import datetime
-from django.forms.models import BaseInlineFormSet, ModelForm
+from django.forms.models import BaseInlineFormSet
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 
 class HorarioFormSet(BaseInlineFormSet):
+
     def clean(self):
-        super(BaseInlineFormSet, self).clean()
-        # get form dia
+        if all(self.errors):
+            return
         if self.instance.dia == datetime.datetime.now().date():
             list_hora = []
             for form in self.forms:
