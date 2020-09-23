@@ -1,11 +1,10 @@
 from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter
 from rest_framework import viewsets, mixins, status
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
 from core.api.serializers import EspecialidadeSerializer, MedicoSerializer, \
-    AgendaSerializer, HorarioSerializer, ConsultaSerializer
+    AgendaSerializer, HorarioSerializer, ConsultaSerializer, ConsultaCreateSerializer
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.utils import get_data_hoje
 
@@ -72,3 +71,31 @@ class ConsultaViewSet(mixins.ListModelMixin,
     queryset = Consulta.objects.filter(
         horario__agenda__dia__gt=get_data_hoje(1).date())
     serializer_class = ConsultaSerializer
+
+    """
+    Endpoint create consulta
+    Parâmetros:
+        agenda_id = Identificador único da agenda
+        horario = horário da consulta
+    Ps.:
+    - Não é possível marcar uma consulta para um dia e horário passados
+    - Não é possível marcar uma consulta se o usuário já possui uma consulta marcada no mesmo dia e horário
+    - Não é possível marcar uma consulta se o dia e horário já foram preenchidos
+    """
+    def create(self, request, *args, **kwargs):
+        serializer = ConsultaCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED,)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user == request.user:
+            if instance.horario.agenda.dia >= get_data_hoje(0).date():
+                if instance.horario.agenda.dia > get_data_hoje(0).date():
+                    instance.delete()
+                    return Response(status=status.HTTP_200_OK)
+                if instance.horario.hora < get_data_hoje(0).time:
+                    instance.delete()
+                    return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)

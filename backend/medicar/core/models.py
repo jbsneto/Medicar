@@ -72,7 +72,7 @@ class Horario(models.Model):
     vago = models.BooleanField(default=True)
 
     def __str__(self):
-        return '%s - %s - %s' % (self.agenda.dia, str(self.hora), self.agenda.medico.nome)
+        return str(self.hora)
 
 
 class Consulta(models.Model):

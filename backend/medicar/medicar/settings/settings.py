@@ -113,7 +113,7 @@ TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
-USE_L10N = True
+#USE_L10N = True
 
 USE_TZ = True
 
@@ -123,3 +123,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+DATE_INPUT_FORMATS = ['%Y-%m-%d']
+TIME_INPUT_FORMATS = ['%H:%M']
+DATETIME_INPUT_FORMATS = ['%Y-%m-%d %H:%M']
