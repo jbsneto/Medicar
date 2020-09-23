@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext as _
+from django.contrib.auth.models import User
 
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.utils import get_data_hoje, str_to_time
@@ -52,7 +53,6 @@ class ConsultaSerializer(serializers.ModelSerializer):
 
 
 class ConsultaCreateSerializer(serializers.ModelSerializer):
-    #agenda = serializers.UUIDField(format=int, required=True)
     agenda_id = serializers.IntegerField(min_value=1, required=True)
     horario = serializers.TimeField(required=True)
 
@@ -63,7 +63,6 @@ class ConsultaCreateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         agenda = Agenda.objects.filter(id=attrs.get('agenda_id')).first()
         if agenda:
-            print(attrs.get('horario'))
             horario = Horario.objects.filter(agenda=agenda, hora=attrs.get('horario'), vago=True).first()
             if not horario:
                 raise ValidationError({'horario': _('horário inexistente na agenda informada.')})
@@ -72,6 +71,11 @@ class ConsultaCreateSerializer(serializers.ModelSerializer):
                     raise ValidationError({'horario': _('inpossível cadastrar consulta para horários passados')})
                 if not horario.vago:
                     raise ValidationError({'horario': _('horário não está livre')})
+
+                # TODO: Ver forma de capturar o usuário no serializer
+                # if Consulta.objects.filter(user=current_user, horario__agenda__dia=agenda.dia, horario__hora=attrs.get('horario')).exists()
+                #    raise ValidationError({'agenda': _('já existe uma consulta para o paciente nesse horário')})
+
             else:
                 raise ValidationError({'agenda': _('inpossível cadastrar consulta para dias passados')})
         else:
@@ -83,3 +87,9 @@ class ConsultaCreateSerializer(serializers.ModelSerializer):
                                          hora=validated_data.get('horario')).first()
         if horario:
             return Consulta.objects.create(horario=horario)
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email','password')
+        write_only_fields = ('password',)
