@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from core.utils import get_data_hoje
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.forms import HorarioFormSet, AgendaForm
 

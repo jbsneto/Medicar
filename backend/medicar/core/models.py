@@ -1,7 +1,10 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
+
+from core.utils import get_data_hoje
 
 
 class Especialidade(models.Model):
@@ -42,6 +45,7 @@ class Agenda(models.Model):
 
     dia = models.DateField(_('Data da agenda'), null=True, blank=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
+
 
     def __str__(self):
         return '%s - %s' % (self.medico.nome, str(self.dia))
