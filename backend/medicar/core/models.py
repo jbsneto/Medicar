@@ -11,6 +11,8 @@ from rest_framework.authtoken.models import Token
 from core.utils import get_data_hoje
 
 
+# TODO: Validate [^'@','.','-','+'] in create User
+
 class Especialidade(models.Model):
     class Meta:
         verbose_name = _('Especialidade Medica')
@@ -102,6 +104,7 @@ class Consulta(models.Model):
 
     def __str__(self):
         return '%s - %s' % (self.get_agenda().medico.nome, str(self.get_agenda().dia))
+
 
 # TODO: @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 @receiver(post_save, sender=User)

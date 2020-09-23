@@ -4,8 +4,6 @@ from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.forms import HorarioFormSet
 
 
-# Register your models here.
-
 @admin.register(Especialidade)
 class EspecialidadeAdmin(admin.ModelAdmin):
     search_fields = ('nome',)
@@ -17,7 +15,7 @@ class HorarioInline(admin.TabularInline):
     extra = 0
     min_num = 1
     formset = HorarioFormSet
-    readonly_fields = ('vago',)
+    # readonly_fields = ('vago',)
 
 
 @admin.register(Agenda)
@@ -41,7 +39,9 @@ class ConsultaAdmin(admin.ModelAdmin):
     fields = ('user', 'horario',)
     readonly_fields = ('user', 'horario',)
 
-'''    def change_view(self, request, object_id, form_url='', extra_context=None):
+    '''
+    # Altera o layout 
+    def change_view(self, request, object_id, form_url='', extra_context=None):
         obj = get_object_or_404(Consulta, pk=object_id)
         extra_context = extra_context or {}
         extra_context['medico'] = obj.horario.agenda.medico
@@ -50,4 +50,5 @@ class ConsultaAdmin(admin.ModelAdmin):
         )
 
     def has_add_permission(self, request, obj=None):
-        return False'''
+        return False
+    '''

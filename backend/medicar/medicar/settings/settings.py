@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
 ]
 
-#AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'auth.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -96,9 +96,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
+AUTHENTICATION_BACKENDS = (
+    # Tenta esse primeiro, se não der vai para o email
+    'django.contrib.auth.backends.ModelBackend',
+    'core.backends.EmailAuthBackend',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

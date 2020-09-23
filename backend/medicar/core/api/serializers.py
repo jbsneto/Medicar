@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
-from core.utils import get_data_hoje, str_to_time
+from core.utils import get_data_hoje
 
 
 class EspecialidadeSerializer(serializers.ModelSerializer):
@@ -26,20 +26,21 @@ class HorarioSerializer(serializers.ModelSerializer):
         model = Horario
         fields = ('hora',)
 
+
 class AgendaSerializer(serializers.ModelSerializer):
     medico = MedicoSerializer(many=False, read_only=True)
     horario = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Agenda
-        fields = ('id', 'medico', 'dia', 'horario')
-
-    def get_horario(self, obj):
-        qs = Horario.objects.filter(agenda=obj, vago=True)
-        if obj.dia == get_data_hoje(0).date():
+    def get_horario(self):
+        qs = Horario.objects.filter(agenda=self, vago=True)
+        if self.dia == get_data_hoje(0).date():
             return [str(horario['hora']) for horario in
                     qs.filter(hora__gt=get_data_hoje(0).time()).values()]
         return [str(horario['hora']) for horario in qs.values()]
+
+    class Meta:
+        model = Agenda
+        fields = ('id', 'medico', 'dia', 'horario')
 
 
 class ConsultaSerializer(serializers.ModelSerializer):
@@ -60,10 +61,10 @@ class ConsultaCreateSerializer(serializers.ModelSerializer):
         model = Consulta
         fields = ('agenda_id', 'horario')
 
-    def validate(self, attrs):
-        agenda = Agenda.objects.filter(id=attrs.get('agenda_id')).first()
+    def create(self, validated_data):
+        agenda = Agenda.objects.filter(id=validated_data.get('agenda_id')).first()
         if agenda:
-            horario = Horario.objects.filter(agenda=agenda, hora=attrs.get('horario'), vago=True).first()
+            horario = Horario.objects.filter(agenda=agenda, hora=validated_data.get('horario'), vago=True).first()
             if not horario:
                 raise ValidationError({'horario': _('horário inexistente na agenda informada.')})
             if agenda.dia >= get_data_hoje(0).date():
@@ -71,25 +72,22 @@ class ConsultaCreateSerializer(serializers.ModelSerializer):
                     raise ValidationError({'horario': _('inpossível cadastrar consulta para horários passados')})
                 if not horario.vago:
                     raise ValidationError({'horario': _('horário não está livre')})
-
-                # TODO: Ver forma de capturar o usuário no serializer
-                # if Consulta.objects.filter(user=current_user, horario__agenda__dia=agenda.dia, horario__hora=attrs.get('horario')).exists()
-                #    raise ValidationError({'agenda': _('já existe uma consulta para o paciente nesse horário')})
-
+                if Consulta.objects.filter(user=validated_data.get('user'),
+                                           horario__agenda__dia=agenda.dia,
+                                           horario__hora=validated_data.get('horario')).exists():
+                    raise ValidationError({'agenda': _('já existe uma consulta para o paciente nesse horário')})
+                return Consulta.objects.create(user=validated_data.get('user'), horario=horario)
             else:
                 raise ValidationError({'agenda': _('inpossível cadastrar consulta para dias passados')})
         else:
             raise ValidationError({'agenda': _('Não existe nenhuma agenda com o ID informado.')})
-        return super(ConsultaCreateSerializer, self).validate(attrs)
 
-    def create(self, validated_data):
-        horario = Horario.objects.filter(agenda_id=validated_data.get('agenda_id'),
-                                         hora=validated_data.get('horario')).first()
-        if horario:
-            return Consulta.objects.create(horario=horario)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email','password')
+        fields = ('username', 'email', 'password')
         write_only_fields = ('password',)
+        extra_kwargs = {
+            'email': {'required': True},
+        }
