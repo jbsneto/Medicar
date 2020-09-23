@@ -1,17 +1,8 @@
 from django.db import models
-from django.db.models.signals import post_save
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
 
-from core.utils import get_data_hoje
-
-
-# TODO: Validate [^'@','.','-','+'] in create User
 
 class Especialidade(models.Model):
     class Meta:
@@ -51,17 +42,6 @@ class Agenda(models.Model):
 
     dia = models.DateField(_('Data da agenda'), null=True, blank=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
-
-    # TODO: tirar isso daqui
-    def clean(self):
-        if self.dia < get_data_hoje(0).date():
-            raise ValidationError(
-                _('Insira uma data possível para agendamento.'))
-        agenda_qs = Agenda.objects.filter(medico=self.medico, dia=self.dia)
-        if agenda_qs:
-            if agenda_qs.first().id != self.pk:
-                raise ValidationError(
-                    _('O medico já tem agenda para esse dia.'))
 
     def __str__(self):
         return '%s - %s' % (self.medico.nome, str(self.dia))
@@ -106,8 +86,14 @@ class Consulta(models.Model):
         return '%s - %s' % (self.get_agenda().medico.nome, str(self.get_agenda().dia))
 
 
-# TODO: @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-@receiver(post_save, sender=User)
+'''
+from django.db.models.signals import post_save
+from django.conf import settings
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+'''

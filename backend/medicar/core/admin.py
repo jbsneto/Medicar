@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.shortcuts import get_object_or_404
+
+from core.utils import get_data_hoje
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
-from core.forms import HorarioFormSet
+from core.forms import HorarioFormSet, AgendaForm
 
 
 @admin.register(Especialidade)
@@ -22,6 +23,7 @@ class HorarioInline(admin.TabularInline):
 class AgendaAdmin(admin.ModelAdmin):
     list_filter = ('medico', 'dia')
     list_display = ('dia', 'medico')
+    form = AgendaForm
     inlines = [HorarioInline, ]
 
 

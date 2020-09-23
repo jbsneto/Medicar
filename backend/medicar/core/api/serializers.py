@@ -31,16 +31,16 @@ class AgendaSerializer(serializers.ModelSerializer):
     medico = MedicoSerializer(many=False, read_only=True)
     horario = serializers.SerializerMethodField()
 
-    def get_horario(self):
-        qs = Horario.objects.filter(agenda=self, vago=True)
-        if self.dia == get_data_hoje(0).date():
-            return [str(horario['hora']) for horario in
-                    qs.filter(hora__gt=get_data_hoje(0).time()).values()]
-        return [str(horario['hora']) for horario in qs.values()]
-
     class Meta:
         model = Agenda
         fields = ('id', 'medico', 'dia', 'horario')
+
+    def get_horario(self, obj):
+        qs = Horario.objects.filter(agenda=obj, vago=True)
+        if obj.dia == get_data_hoje(0).date():
+            return [str(horario['hora']) for horario in
+                    qs.filter(hora__gt=get_data_hoje(0).time()).values()]
+        return [str(horario['hora']) for horario in qs.values()]
 
 
 class ConsultaSerializer(serializers.ModelSerializer):
