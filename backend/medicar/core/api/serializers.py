@@ -45,7 +45,8 @@ class AgendaSerializer(serializers.ModelSerializer):
 
 class ConsultaSerializer(serializers.ModelSerializer):
     hora = serializers.CharField(source='horario')
-    medico = MedicoSerializer(many=False, read_only=True, source='horario.agenda.medico')
+    medico = MedicoSerializer(many=False, read_only=True,
+                              source='horario.agenda.medico')
 
     class Meta:
         model = Consulta
@@ -69,12 +70,14 @@ class ConsultaCreateSerializer(serializers.ModelSerializer):
                 raise ValidationError({'horario': _('horário inexistente na agenda informada.')})
             if agenda.dia >= get_data_hoje(0).date():
                 if agenda.dia == get_data_hoje(0).date() and horario.hora < get_data_hoje(0).time:
-                    raise ValidationError({'horario': _('inpossível cadastrar consulta para horários passados')})
+                    raise ValidationError(
+                        {'horario': _('inpossível cadastrar consulta para horários passados')})
                 if not horario.vago:
                     raise ValidationError({'horario': _('horário não está livre')})
                 if Consulta.objects.filter(user=validated_data.get('user'),
                                            horario__agenda__dia=agenda.dia,
-                                           horario__hora=validated_data.get('horario')).exists():
+                                           horario__hora=validated_data.get('horario')
+                                           ).exists():
                     raise ValidationError({'agenda': _('já existe uma consulta para o paciente nesse horário')})
                 return Consulta.objects.create(user=validated_data.get('user'), horario=horario)
             else:

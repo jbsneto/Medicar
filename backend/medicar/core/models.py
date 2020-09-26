@@ -1,10 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
-
-from core.utils import get_data_hoje
 
 
 class Especialidade(models.Model):
@@ -77,7 +74,7 @@ class Consulta(models.Model):
 
     def save(self, *args, **kwargs):
         self.horario.vago = False
-        self.horario.save()
+        self.save()
         super().save(*args, **kwargs)
 
     def get_agenda(self):

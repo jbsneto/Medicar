@@ -36,7 +36,8 @@ class AgendaForm(forms.ModelForm):
             return
         if self.cleaned_data['dia'] < get_data_hoje(0).date():
             raise ValidationError(_('Insira uma data possível para agendamento.'))
-        agenda_qs = Agenda.objects.filter(medico_id=self.cleaned_data['medico'], dia=self.cleaned_data['dia'])
+        agenda_qs = Agenda.objects.filter(medico_id=self.cleaned_data['medico'],
+                                          dia=self.cleaned_data['dia'])
         if agenda_qs:
             if agenda_qs.first().pk == self.instance.pk:
                 return
