@@ -9,9 +9,6 @@ virtualenv -p python3 medicar
 - Ativar virtualenv:
 cd anabot . bin/activate
 
-- Clonar repositório:
-git clone git@bitbucket.org:jbsneto/medicar.git
-
 - Entrar repositório:
 cd medicar/backend/medicar
 
@@ -23,3 +20,17 @@ python manage.py migrate
 
 - Executar servidor:
 pyrhon manage.py runserver
+
+# Como executar o projeto (FrontEnd - Angular9)
+
+- Instalar npm
+sudo apt install npm
+
+- Entrar repositório:
+cd medicar/frontend/medicar
+
+- Executar servidor:
+npm start
+
+
+
