@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from core.api.serializers import EspecialidadeSerializer, MedicoSerializer, \
     AgendaSerializer, HorarioSerializer, ConsultaSerializer, \
     ConsultaCreateSerializer, UserSerializer
-from core.api.filters import MedicoFilter, AgendaFilter, ConsultaFilter
+from core.api.filters import MedicoFilter, AgendaFilter
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.utils import get_data_hoje
 
@@ -55,6 +55,13 @@ class ConsultaViewSet(mixins.ListModelMixin,
         horario__agenda__dia__gt=get_data_hoje(1).date())
     serializer_class = ConsultaSerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if request.user:
+            queryset = queryset.filter(user=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     """
     Endpoint create consulta
     Parâmetros:
@@ -83,3 +90,13 @@ class ConsultaViewSet(mixins.ListModelMixin,
 class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+
+
+    #login via JWT Token 'api/user/token/'

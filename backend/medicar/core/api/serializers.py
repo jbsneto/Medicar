@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
+from django.core import exceptions
+from django.contrib.auth.password_validation import validate_password
+
 
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.utils import get_data_hoje
@@ -31,10 +34,6 @@ class AgendaSerializer(serializers.ModelSerializer):
     medico = MedicoSerializer(many=False, read_only=True)
     horario = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Agenda
-        fields = ('id', 'medico', 'dia', 'horario')
-
     def get_horario(self, obj):
         qs = Horario.objects.filter(agenda=obj, vago=True)
         if obj.dia == get_data_hoje(0).date():
@@ -42,25 +41,26 @@ class AgendaSerializer(serializers.ModelSerializer):
                     qs.filter(hora__gt=get_data_hoje(0).time()).values()]
         return [str(horario['hora']) for horario in qs.values()]
 
+    class Meta:
+        model = Agenda
+        fields = ('id', 'medico', 'dia', 'horario')
+
 
 class ConsultaSerializer(serializers.ModelSerializer):
     hora = serializers.CharField(source='horario')
+    dia = serializers.CharField(source='horario.agenda.dia')
     medico = MedicoSerializer(many=False, read_only=True,
                               source='horario.agenda.medico')
 
     class Meta:
         model = Consulta
-        fields = ('id', 'hora', 'data_agendamento', 'medico')
+        fields = ('id','dia', 'hora', 'data_agendamento', 'medico')
         read_only_fields = ('id', 'data_agendamento')
 
 
 class ConsultaCreateSerializer(serializers.ModelSerializer):
     agenda_id = serializers.IntegerField(min_value=1, required=True)
     horario = serializers.TimeField(required=True)
-
-    class Meta:
-        model = Consulta
-        fields = ('agenda_id', 'horario')
 
     def create(self, validated_data):
         agenda = Agenda.objects.filter(id=validated_data.get('agenda_id')).first()
@@ -85,8 +85,23 @@ class ConsultaCreateSerializer(serializers.ModelSerializer):
         else:
             raise ValidationError({'agenda': _('Não existe nenhuma agenda com o ID informado.')})
 
+    class Meta:
+        model = Consulta
+        fields = ('agenda_id', 'horario')
+
 
 class UserSerializer(serializers.ModelSerializer):
+
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except ValidationError as exc:
+            raise ValidationError({'password': _(str(exc))})
+        return value
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
     class Meta:
         model = User
         fields = ('username', 'email', 'password')

@@ -1,0 +1,53 @@
+<div class="col-md-6 mx-auto">
+    <div class="row logo">
+        <div class="col justify-content-end align-self-center">
+            <img class="logo" src="assets/img/logo.png" alt="logo">
+        </div>
+        <div class="row justify-content-end align-self-center">
+            <div class="col">
+                <h4 class='text-center' >Username</h4>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-link" (click)="auth.logoutUser()">Desconectar</button>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row justify-content-between">
+                <div class="col-auto mr-auto">
+                    <h3 class="font-weight-bold">Consulta Clinica</h3>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-primary bt-form-home">
+                        <mat-icon>add</mat-icon>Nova Consulta
+                    </button>
+                </div>
+                
+            </div>
+            <table id="consultaTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>especialidade</th>
+                        <th>medico</th>
+                        <th>data</th>
+                        <th>hora</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="consulta" *ngFor="let consulta of consultas">
+                        <td class="especialidade" name="especialidade">{{ consulta.medico.especialidade.nome }}</td>
+                        <td class="profissional" name="medico">{{ consulta.medico.nome }}</td>
+                        <td class="data" name="data">{{ consulta.dia }}</td>
+                        <td class="hora" name="hora">{{ consulta.hora }}</td>
+                        <td>
+                            <a href="#">Desmarcar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

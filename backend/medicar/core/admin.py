@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.shortcuts import get_object_or_404
 
 from core.models import Especialidade, Medico, Agenda, Horario, Consulta
 from core.forms import HorarioFormSet, AgendaForm
@@ -35,21 +36,37 @@ class MedicoAdmin(admin.ModelAdmin):
 
 @admin.register(Consulta)
 class ConsultaAdmin(admin.ModelAdmin):
+    # ajeitar essa visualização
     list_filter = ('user', 'horario__agenda__medico', 'horario__agenda__dia', 'horario__hora')
-    list_display = ('user', 'get_agenda', 'horario')
-    fields = ('user', 'horario',)
+    list_display = ('user', 'dia', 'hora', 'medico')
     readonly_fields = ('user', 'horario',)
 
-    '''
-    # Altera o layout 
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        obj = get_object_or_404(Consulta, pk=object_id)
-        extra_context = extra_context or {}
-        extra_context['medico'] = obj.horario.agenda.medico
-        return super().change_view(
-            request, object_id, form_url, extra_context=extra_context,
-        )
+    def medico(self, obj):
+        return obj.horario.agenda.medico.nome
+
+    def dia(self, obj):
+        return obj.horario.agenda.dia
+
+    def hora(self, obj):
+        return obj.horario.hora
 
     def has_add_permission(self, request, obj=None):
         return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    '''
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        obj = get_object_or_404(Consulta, pk=object_id)
+        extra_context = extra_context or {}
+        extra_context['medico'] = []
+        medico = obj.horario.agenda.medico
+        extra_context['medico'].append({
+            'nome': medico.nome,
+            'especialidade': medico.especialidade
+        })
+        return super().change_view(
+            request, object_id, form_url, extra_context=extra_context,
+        )
     '''

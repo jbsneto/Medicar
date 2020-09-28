@@ -43,7 +43,6 @@ class Agenda(models.Model):
     dia = models.DateField(_('Data da agenda'), null=True, blank=True)
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE, verbose_name=_('Médico'))
 
-
     def __str__(self):
         return '%s - %s' % (self.medico.nome, str(self.dia))
 
@@ -74,7 +73,7 @@ class Consulta(models.Model):
 
     def save(self, *args, **kwargs):
         self.horario.vago = False
-        self.save()
+        self.horario.save()
         super().save(*args, **kwargs)
 
     def get_agenda(self):

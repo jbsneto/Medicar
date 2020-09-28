@@ -22,15 +22,3 @@ class AgendaFilter(filters.FilterSet):
     class Meta:
         model = Agenda
         fields = ['medico', 'especialidade', 'data_ini', 'data_fim']
-
-
-class ConsultaFilter(filters.FilterSet):
-    medico = filters.AllValuesMultipleFilter(field_name='medico__nome')
-    especialidade = filters.AllValuesMultipleFilter(
-        field_name='medico__especialidade__id')
-    data_ini = filters.DateTimeFilter(field_name='dia', lookup_expr='gte')
-    data_fim = filters.DateTimeFilter(field_name='dia', lookup_expr='lte')
-
-    class Meta:
-        model = Agenda
-        fields = ['medico', 'especialidade', 'data_ini', 'data_fim']

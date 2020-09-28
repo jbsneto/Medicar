@@ -1,8 +1,19 @@
+# backend/
 *.pyc
+__pycache__/
 db.sqlite3
 .idea
-media/*
-static/*
 data/*
 cache/*
 venv*
+
+# frontend/
+#frontend/node_modules
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*

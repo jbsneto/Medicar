@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'core',
     'rest_framework',
     'rest_framework.authtoken',
@@ -40,6 +41,7 @@ AUTH_USER_MODEL = 'auth.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -81,9 +83,9 @@ DATABASES = {
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    # {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
-    # {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    #{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    #{'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    #{'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
@@ -91,13 +93,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        # JWTA uthentication
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
+
 AUTHENTICATION_BACKENDS = (
-    # Tenta esse primeiro, se não der vai para o email
     'django.contrib.auth.backends.ModelBackend',
+    # backend de auth por email
     'core.backends.EmailAuthBackend',
 )
 
