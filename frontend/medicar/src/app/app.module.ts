@@ -4,7 +4,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,7 @@ import { AuthService } from './services/auth.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { AuthGuard } from './guard/auth.guard';
 import { TokenInterceptorService } from './services/token-interceptor.service';
+import { ConsultaComponent } from './components/consulta/consulta.component';
 
 
 @NgModule({
@@ -23,6 +25,7 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
+    ConsultaComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,6 +33,7 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     AppRoutingModule,
     FormsModule,
     MatIconModule,
+    MatSnackBarModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
     

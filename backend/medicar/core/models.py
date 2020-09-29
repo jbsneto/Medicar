@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 
 
+User._meta.get_field('email').blank = False
+User._meta.get_field('email').null = False
+
+
 class Especialidade(models.Model):
     class Meta:
         verbose_name = _('Especialidade Medica')

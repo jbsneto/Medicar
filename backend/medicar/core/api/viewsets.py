@@ -62,12 +62,6 @@ class ConsultaViewSet(mixins.ListModelMixin,
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    """
-    Endpoint create consulta
-    Parâmetros:
-        agenda_id = Identificador único da agenda
-        horario = horário da consulta
-    """
     def create(self, request, *args, **kwargs):
         serializer = ConsultaCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -97,6 +91,4 @@ class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
 
-
-
-    #login via JWT Token 'api/user/token/'
+    # login via JWT Token 'api/user/token/'
