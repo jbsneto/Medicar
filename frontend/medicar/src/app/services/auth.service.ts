@@ -23,14 +23,16 @@ export class AuthService {
 
   registerUser(user){
     return this.http.post<any>(this.registerUrl, user, {headers:{skip:"true"}}).pipe(
-      map((res) => res),
+      map((res) => this.createHandler(res)),
       catchError((e) => this.errorHandler(e))
     );
   }
 
-  // post user
   loginUser(user){
-    return this.http.post<any>(this.loginUrl, user)
+    return this.http.post<any>(this.loginUrl, user).pipe(
+      map(res => res),
+      catchError((e) => this.errorHandler(e))
+    )
   }
 
   logoutUser(){
@@ -38,6 +40,8 @@ export class AuthService {
     localStorage.removeItem('token_refresh')
     this.router.navigate(['/login'])
   }
+
+
 
   // get token localStorafe {browser/application} / inject token in auth-interceptor
   getToken(){
@@ -58,12 +62,17 @@ export class AuthService {
     if (e.error.username){
       this.showMessage(`Usuário: ${e.error.username}`, true);
     }
-    if (e.error.username){
-      this.showMessage(`Email: ${e.error.username}`, true);
+    if (e.error.email){
+      this.showMessage(`Email: ${e.error.email}`, true);
     }
-    if (e.error.username){
-      this.showMessage(`Senha: ${e.error.username}`, true);
+    if (e.error.password){
+      this.showMessage(`Senha: ${e.error.password}`, true);
     }
+    return EMPTY;
+  }
+
+  createHandler(res: any): Observable<any> {
+    this.showMessage(`Usuário registrado com sucesso.`, false);
     return EMPTY;
   }
 

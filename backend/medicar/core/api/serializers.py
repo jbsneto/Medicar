@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
-from django.core import exceptions
 from django.contrib.auth.password_validation import validate_password
 
 

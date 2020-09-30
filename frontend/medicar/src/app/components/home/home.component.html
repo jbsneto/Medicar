@@ -19,7 +19,7 @@
                     <h3 class="font-weight-bold">Consulta Clinica</h3>
                 </div>
                 <div class="col-auto">
-                    <button type="button" class="btn btn-sm btn-primary bt-form-home">
+                    <button type="button" routerLink="/consulta" class="btn btn-sm btn-primary bt-form-home">
                         <mat-icon>add</mat-icon>Nova Consulta
                     </button>
                 </div>
@@ -36,13 +36,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="consulta" *ngFor="let consulta of consultas">
+                    <tr *ngFor="let consulta of consultas" id="{{ consulta.id}}" >
                         <td class="especialidade" name="especialidade">{{ consulta.medico.especialidade.nome }}</td>
                         <td class="profissional" name="medico">{{ consulta.medico.nome }}</td>
                         <td class="data" name="data">{{ consulta.dia }}</td>
                         <td class="hora" name="hora">{{ consulta.hora }}</td>
                         <td>
-                            <a href="#">Desmarcar</a>
+                            <a (click)="deleteConsulta()" href="#">Desmarcar</a>
                         </td>
                     </tr>
                 </tbody>

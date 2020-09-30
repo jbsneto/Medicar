@@ -15,6 +15,12 @@ export class RegisterComponent implements OnInit {
     password: '',
   }
 
+  error = {
+    username: '',
+    email: '',
+    password: '',
+  }
+
   constructor(
     private auth: AuthService,
     private router: Router
@@ -27,7 +33,7 @@ export class RegisterComponent implements OnInit {
     this.auth.registerUser(this.registerUserData)
     .subscribe(
       res => console.log(res),
-      err => console.log(err)
+      err => this.error = err
     )
   }
 

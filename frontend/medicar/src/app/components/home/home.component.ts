@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { CrudService } from 'src/app/services/crud.service';
 
@@ -12,15 +13,30 @@ export class HomeComponent implements OnInit {
 
   consultas = []
 
+  consultaId: string
+
   constructor(
     private crudEvent: CrudService,
-    public auth: AuthService
+    public auth: AuthService,
+    public crud: CrudService,
+    private router: Router
     ) { }
 
   ngOnInit(): void {
     this.crudEvent.getConsultaEvent()
       .subscribe(
         res => this.consultas = res,
+        err => console.log(err)
+      )
+  }
+
+  deleteConsulta(){
+    this.crud.deleteConsultaEvent(this.consultaId)
+      .subscribe(
+        res => {
+          console.log(res),
+          this.router.navigate(['/'])
+        },
         err => console.log(err)
       )
   }

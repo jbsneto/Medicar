@@ -16,7 +16,7 @@ class HorarioInline(admin.TabularInline):
     extra = 0
     min_num = 1
     formset = HorarioFormSet
-    # readonly_fields = ('vago',)
+    readonly_fields = ('vago',)
 
 
 @admin.register(Agenda)
