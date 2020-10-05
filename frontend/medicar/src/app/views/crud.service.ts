@@ -8,22 +8,23 @@ import { Observable } from 'rxjs';
 })
 export class CrudService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api/consulta/';
+  private apiUrl = 'http://127.0.0.1:8000/api/';
 
+  private consultaUrl = `${this.apiUrl}consulta/`;
   private especialidadeUrl = `${this.apiUrl}especialidade/`;
 
   constructor(private http: HttpClient) { }
 
-  getConsultaEvent(){
-    return this.http.get<any>(this.apiUrl)
+  getConsultaEvent(): Observable<any> {
+    return this.http.get<any>(this.consultaUrl)
   }
 
-  getEspecialidadeEvent(){
-    return this.http.get<any>(this.apiUrl)
+  getEspecialidadeEvent(): Observable<any> {
+    return this.http.get<any>(this.especialidadeUrl)
   }
 
-  deleteConsultaEvent(id: string){
-    const url = `${this.apiUrl}/${id}`;
+  deleteConsultaEvent(id: string): Observable<any> {
+    const url = `${this.consultaUrl}/${id}`;
     return this.http.delete<any>(url);
   }
 }

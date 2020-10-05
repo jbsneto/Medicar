@@ -18,7 +18,6 @@ export class HomeComponent implements OnInit {
   constructor(
     private crudEvent: CrudService,
     public auth: AuthService,
-    public crud: CrudService,
     private router: Router
     ) { }
 
@@ -31,7 +30,7 @@ export class HomeComponent implements OnInit {
   }
 
   deleteConsulta(){
-    this.crud.deleteConsultaEvent(this.consultaId)
+    this.crudEvent.deleteConsultaEvent(this.consultaId)
       .subscribe(
         res => {
           console.log(res),

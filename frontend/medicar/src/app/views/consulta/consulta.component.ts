@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CrudService } from '../crud.service';
 
 @Component({
   selector: 'app-consulta',
@@ -7,9 +9,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConsultaComponent implements OnInit {
 
-  constructor() { }
+  especialidades = []
+  especialidadeId = 0
+  medicos = []
+
+  constructor(
+    private crudEvent: CrudService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    this.crudEvent.getEspecialidadeEvent()
+      .subscribe(
+        res => this.especialidades = res,
+        err => console.log(err)
+      )
   }
+
 
 }

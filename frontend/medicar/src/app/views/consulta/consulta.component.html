@@ -6,6 +6,9 @@
         <div class='box'>
             <select class="form-control">
                 <option>Especialidade</option>
+                <option *ngFor="let especialidade of especialidades">
+                    {{ especialidade.nome }}
+                </option>
             </select>
         </div>
         <div class='box'>
