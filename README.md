@@ -22,7 +22,7 @@ python manage.py migrate
 python manage.py createsuperuser
 
 - Executar servidor:
-pyrhon manage.py runserver 8000
+python manage.py runserver 8000
 
 - Acessar a documentação:
 http://localhost:8000/swagger/
