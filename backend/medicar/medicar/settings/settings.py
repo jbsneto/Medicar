@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'drf_yasg',
 ]
 
 AUTH_USER_MODEL = 'auth.User'
@@ -98,7 +99,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     # backend de auth por email
@@ -126,3 +126,16 @@ STATIC_URL = '/static/'
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 TIME_INPUT_FORMATS = ['%H:%M']
 DATETIME_INPUT_FORMATS = ['%Y-%m-%d %H:%M']
+
+LOGIN_URL = '/admin/login/'
+LOGOUT_URL = '/admin/logout/'
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic',
+        }
+    },
+    'LOGIN_URL': LOGIN_URL,
+    'LOGOUT_URL': LOGOUT_URL,
+}

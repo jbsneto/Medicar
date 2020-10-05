@@ -18,8 +18,14 @@ pip install -r requirements.txt
 - Executar migrate:
 python manage.py migrate
 
+- Criar um super usuário:
+python manage.py createsuperuser
+
 - Executar servidor:
-pyrhon manage.py runserver
+pyrhon manage.py runserver 8000
+
+- Acessar a documentação:
+http://localhost:8000/swagger/
 
 # Como executar o projeto (FrontEnd - Angular9)
 

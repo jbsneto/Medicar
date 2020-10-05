@@ -9,14 +9,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
-import { HomeComponent } from './views/home/home.component';
-import { AuthService } from './auth/auth.service';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { HomeComponent } from './components/home/home.component';
+import { AuthService } from './services/auth.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { AuthGuard } from './auth/auth.guard';
-import { TokenInterceptorService } from './auth/token-interceptor.service';
-import { ConsultaComponent } from './views/consulta/consulta.component';
+import { AuthGuard } from './guard/auth.guard';
+import { TokenInterceptorService } from './services/token-interceptor.service';
+import { ConsultaComponent } from './components/consulta/consulta.component';
 
 
 @NgModule({

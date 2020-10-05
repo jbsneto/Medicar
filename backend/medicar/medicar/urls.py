@@ -17,7 +17,21 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="%s API" % settings.PROJECT_TITLE,
+      default_version='v1',
+      description="Desafio Intmed softwares",
+      terms_of_service="https://github.com/jbsneto/medicar",
+      contact=openapi.Contact(email="josebernardinoneto@gmail.com"),
+   ),
+   public=False,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +39,8 @@ urlpatterns = [
     path('api/user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/user/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('swagger<format>', schema_view.without_ui(), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger'), name='schema-swagger-ui'),
 ]
 
 if settings.DEBUG:

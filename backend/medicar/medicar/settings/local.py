@@ -25,6 +25,7 @@ DATABASES = {
     }
 }
 
+
 # Editar configurações de acordo com a necessidade
 # https://pypi.org/project/djangorestframework-simplejwt/
 SIMPLE_JWT = {
